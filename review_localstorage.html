@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Review Website (Statisch met LocalStorage)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+    h1, h2 { color: #333; }
+    form { margin-bottom: 20px; }
+    input, textarea { width: 100%; padding: 10px; margin: 5px 0; }
+    button { padding: 10px 20px; background: #007BFF; color: white; border: none; cursor: pointer; }
+    .review { background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+    .review h3 { margin: 0 0 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Laat een review achter</h1>
+
+  <form id="reviewForm">
+    <input type="text" id="name" placeholder="Je naam" required>
+    <textarea id="message" placeholder="Je review" required></textarea>
+    <button type="submit">Verstuur</button>
+  </form>
+
+  <h2>Reviews</h2>
+  <div id="reviews"></div>
+
+  <script>
+    const form = document.getElementById('reviewForm');
+    const reviewsDiv = document.getElementById('reviews');
+
+    function loadReviews() {
+      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      reviewsDiv.innerHTML = '';
+      reviews.reverse().forEach(review => {
+        const div = document.createElement('div');
+        div.className = 'review';
+        div.innerHTML = `<h3>${review.name}</h3><p>${review.message}</p>`;
+        reviewsDiv.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const message = document.getElementById('message').value.trim();
+      if (!name || !message) return;
+
+      const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+      reviews.push({ name, message });
+      localStorage.setItem('reviews', JSON.stringify(reviews));
+      form.reset();
+      loadReviews();
+    });
+
+    // Load reviews on page load
+    loadReviews();
+  </script>
+
+</body>
+</html>
